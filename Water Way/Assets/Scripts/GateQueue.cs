@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.UI;
 
 public class GateQueue : MonoBehaviour
 {
@@ -12,7 +14,14 @@ public class GateQueue : MonoBehaviour
     private List<Sortable> Sortables_ = new List<Sortable>();
     GameObject obj;
     Sortable sortable;
+    public ScoreManager scoreManager;
+    public Timer timerManager;
     private bool Busy;
+    public GameOverScreen GameOverScreen;
+    public Image countdownCircle;
+    public AudioSource MyAudio, BGM, GOBGM;
+    public AudioClip MySoundEffect, MySoundEffect2;
+    
 
     void Start()
     {
@@ -30,22 +39,43 @@ public class GateQueue : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
+            PlaySound();
+            Vector3 targetPos = currentItem.transform.position + Vector3.up * 6;
             if (currentItem.GetSortableType() == Sortable.SortableType.Fish)
             {
-                Vector3 targetPos = currentItem.transform.position + Vector3.up * 5;
+
                 StartCoroutine(SortAndShift(currentItem, targetPos));
+                scoreManager.AddScore(5);
+                timerManager.restartTimer();
             }
-            // else GameOver();
+            else if (currentItem.GetSortableType() == Sortable.SortableType.Trash)
+            {
+                StartCoroutine(SortAndShift(currentItem, targetPos));
+                GameOver();
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
+            PlaySound2();
+            Vector3 targetPos = currentItem.transform.position + Vector3.down * 5;
             if (currentItem.GetSortableType() == Sortable.SortableType.Trash)
             {
-                Vector3 targetPos = currentItem.transform.position + Vector3.down * 5;
+
                 StartCoroutine(SortAndShift(currentItem, targetPos));
+                scoreManager.AddScore(5);
+                timerManager.restartTimer();
             }
-            // else GameOver();
+            else if (currentItem.GetSortableType() == Sortable.SortableType.Fish)
+            {
+                StartCoroutine(SortAndShift(currentItem, targetPos));
+                GameOver();
+            }
+        }
+
+        if (countdownCircle.fillAmount == 0)
+        {
+            GameOver();
         }
     }
 
@@ -56,7 +86,7 @@ public class GateQueue : MonoBehaviour
         // Animate up/down move
         while (Vector3.Distance(sortable.transform.position, targetPos) > 0.01f)
         {
-            sortable.transform.position = Vector3.MoveTowards(sortable.transform.position, targetPos, 10 * Time.deltaTime);
+            sortable.transform.position = Vector3.MoveTowards(sortable.transform.position, targetPos, 20 * Time.deltaTime);
             yield return null;
         }
 
@@ -76,12 +106,13 @@ public class GateQueue : MonoBehaviour
             shifting = false;
             for (int i = 0; i < Sortables_.Count; i++)
             {
-                Sortables_[i].transform.position = Vector3.MoveTowards(Sortables_[i].transform.position, targetPositions[i], 5 * Time.deltaTime);
+                Sortables_[i].transform.position = Vector3.MoveTowards(Sortables_[i].transform.position, targetPositions[i], 10 * Time.deltaTime);
                 if (Vector3.Distance(Sortables_[i].transform.position, targetPositions[i]) > 0.01f)
                     shifting = true;
             }
             yield return null;
         }
+
 
         SpawnQueue(Sortables_.Count);
         Busy = false;
@@ -101,5 +132,24 @@ public class GateQueue : MonoBehaviour
         obj = Instantiate(prefab, spawnPos.position + Vector3.right * (index * spacing), Quaternion.identity);
         sortable = obj.GetComponent<Sortable>();
         Sortables_.Add(sortable);
+    }
+
+    public void GameOver()
+    {
+        GameOverScreen.SetUp();
+        BGM.Stop();
+        GOBGM.Play();
+    }
+
+    void PlaySound()
+    {
+        MyAudio.clip = MySoundEffect;
+        MyAudio.Play();
+    }
+
+    void PlaySound2()
+    {
+        MyAudio.clip = MySoundEffect2;
+        MyAudio.Play();
     }
 }
