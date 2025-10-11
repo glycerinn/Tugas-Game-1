@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Sortable : MonoBehaviour
 {
-    public enum SortableType { Fish, Trash };
+    public enum SortableType { Fish, Trash, Coin };
 
     public SortableType type;
 

@@ -8,7 +8,7 @@ public class Timer : MonoBehaviour
 {
     [SerializeField] Image countdownCircle;
     [SerializeField] int TimerValue;
-    float multiplier=1;
+    public float multiplier = 1;
     float TimerFloat;
 
     void Start()

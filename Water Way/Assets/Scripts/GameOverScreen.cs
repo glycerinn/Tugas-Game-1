@@ -10,6 +10,7 @@ public class GameOverScreen : MonoBehaviour
     [SerializeField] TextMeshProUGUI CurrentScore;
     public AudioSource mySource;
     public AudioClip myClip;
+    public AudioClip myClip2;
 
 
     void Start()
@@ -22,6 +23,8 @@ public class GameOverScreen : MonoBehaviour
         gameObject.SetActive(true);
         FinalScoreText.text = CurrentScore.text;
         CurrentScore.gameObject.SetActive(false);
+        mySource.clip = myClip2;
+        mySource.Play();
     }
 
     public void PlayAgain()

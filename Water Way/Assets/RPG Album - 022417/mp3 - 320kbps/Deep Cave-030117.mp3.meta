@@ -1,0 +1,30 @@
+fileFormatVersion: 2
+guid: 0bff44eb1855b19418430c12dfe21a27
+AssetOrigin:
+  serializedVersion: 1
+  productId: 84994
+  packageName: RPG BGM Album - 022417
+  packageVersion: 1.0
+  assetPath: Assets/RPG Album - 022417/mp3 - 320kbps/Deep Cave-030117.mp3
+  uploadId: 166600
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 8
+  defaultSettings:
+    serializedVersion: 2
+    loadType: 0
+    sampleRateSetting: 1
+    sampleRateOverride: 44100
+    compressionFormat: 1
+    quality: 1
+    conversionMode: 0
+    preloadAudioData: 1
+  platformSettingOverrides: {}
+  forceToMono: 1
+  normalize: 1
+  loadInBackground: 0
+  ambisonic: 0
+  3D: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

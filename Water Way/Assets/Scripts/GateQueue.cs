@@ -6,8 +6,7 @@ using UnityEngine.UI;
 
 public class GateQueue : MonoBehaviour
 {
-    public GameObject[] fishPrefab;
-    public GameObject[] trashPrefab;
+    public GameObject[] fishPrefab, trashPrefab, coinPrefab;
     public Transform spawnPos;
     public int SortableCount = 10;
     public float spacing = 15f;
@@ -15,11 +14,12 @@ public class GateQueue : MonoBehaviour
     GameObject obj;
     Sortable sortable;
     public ScoreManager scoreManager;
+    public CoinManager coinManager;
     public Timer timerManager;
     private bool Busy;
     public GameOverScreen GameOverScreen;
     public Image countdownCircle;
-    public AudioSource MyAudio, BGM, GOBGM;
+    public AudioSource MyAudio, BGM;
     public AudioClip MySoundEffect, MySoundEffect2;
     
 
@@ -55,6 +55,17 @@ public class GateQueue : MonoBehaviour
             }
         }
 
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            Vector3 targetPos = currentItem.transform.position + Vector3.up * 0;
+            if (currentItem.GetSortableType() == Sortable.SortableType.Coin)
+            {
+                StartCoroutine(SortAndShift(currentItem, targetPos));
+                coinManager.AddCoin(1);
+                timerManager.restartTimer();
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             PlaySound2();
@@ -76,6 +87,7 @@ public class GateQueue : MonoBehaviour
         if (countdownCircle.fillAmount == 0)
         {
             GameOver();
+            
         }
     }
 
@@ -113,7 +125,6 @@ public class GateQueue : MonoBehaviour
             yield return null;
         }
 
-
         SpawnQueue(Sortables_.Count);
         Busy = false;
     }
@@ -125,9 +136,13 @@ public class GateQueue : MonoBehaviour
         {
             prefab = fishPrefab[Random.Range(0, fishPrefab.Length)];
         }
-        else
+        else if (Random.value < 0.5f)
         {
             prefab = trashPrefab[Random.Range(0, trashPrefab.Length)];
+        }
+        else
+        {
+            prefab = coinPrefab[Random.Range(0, coinPrefab.Length)];
         }
         obj = Instantiate(prefab, spawnPos.position + Vector3.right * (index * spacing), Quaternion.identity);
         sortable = obj.GetComponent<Sortable>();
@@ -136,9 +151,9 @@ public class GateQueue : MonoBehaviour
 
     public void GameOver()
     {
+        coinManager.AddtoTotal();
         GameOverScreen.SetUp();
         BGM.Stop();
-        GOBGM.Play();
     }
 
     void PlaySound()
